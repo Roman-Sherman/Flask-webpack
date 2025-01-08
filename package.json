@@ -1,0 +1,11 @@
+{
+  "devDependencies": {
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-manifest-plugin": "^5.0.0",
+    "webpack-merge": "^6.0.1"
+  },
+  "scripts": {
+    "build": "webpack --mode production"
+  }
+}

@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  />
+  <title>App</title>
+  <style>
+    /* Basic styles for the card and color picker */
+    .color-picker-card {
+      width: 100px;
+      margin: 20px;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+
+    /* Color preview circle */
+    .color-preview {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      margin: 0 auto;
+      cursor: pointer;
+      border: 2px solid #ccc;
+    }
+
+    /* Hidden color picker initially */
+    #color-picker-container {
+      display: none;
+      margin-top: 10px;
+    }
+
+    /* Sample text */
+    #sample-text {
+      font-size: 16px;
+      margin-top: 20px;
+    }
+  </style>
+  <link
+    rel="stylesheet"
+    href="style.css"
+  >
+
+</head>
+
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="red-circle"></div>
+      <span class="header-text">Hollow Red Circle</span>
+    </div>
+
+    <!-- Font Selector -->
+
+    <div class="search-bar">
+      <div class="search-icon">
+        <i
+          class="fas fa-search"
+          title="Start Searching"
+        ></i>
+      </div>
+      <input
+        type="text"
+        id="user-input"
+        placeholder="What would you like?"
+      />
+      <input
+        type="file"
+        id="videoFile"
+        accept="video/*"
+        required
+      >
+      <i
+        class="fa-regular fa-pen-to-square style-icon"
+        id="subtitleCardtoggler"
+        style="display: none;"
+        title="Select Style"
+      ></i>
+
+      <div class="file-upload">
+        <input
+          type="file"
+          id="file-input"
+          accept=".pdf,.txt,.doc,.docx"
+          style="display: none"
+        />
+        <i
+          class="fas fa-file-upload"
+          id="file-upload-icon"
+          title="Upload a document"
+        ></i>
+
+      </div>
+      <div>
+
+      </div>
+      <i
+        class="fa-regular fa-pen-to-square style-icon"
+        id="style-icon"
+        title="Select Style"
+      ></i>
+
+      <div
+        class="dropdown-content"
+        id="style-dropdown"
+      >
+        <div
+          class="dropdown-item"
+          data-style="detailed"
+        >
+          Detailed and High-quality
+        </div>
+        <div
+          class="dropdown-item"
+          data-style="animated"
+        >
+          Colorful and Animated
+        </div>
+        <div
+          class="dropdown-item"
+          data-style="sketch"
+        >Pencil Sketch</div>
+        <div
+          class="dropdown-item"
+          data-style="abstract"
+        >Abstract</div>
+        <div
+          class="dropdown-item"
+          data-style="vintage"
+        >Vintage</div>
+        <div
+          class="dropdown-item"
+          data-style="cyberpunk"
+        >Cyberpunk</div>
+        <div
+          class="dropdown-item"
+          data-style="minimalist"
+        >Minimalist</div>
+        <div
+          class="dropdown-item"
+          data-style="watercolor"
+        >
+          Watercolor Painting
+        </div>
+        <div
+          class="dropdown-item"
+          data-style="low-poly"
+        >
+          Low-Poly Geometric
+        </div>
+      </div>
+
+      <div
+        class="variations-dropdown"
+        title="Select amount"
+      >
+        <select id="variations-select">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+      </div>
+
+      <div
+        class="dropdown"
+        title="Select Media Type"
+      >
+        <span
+          class="menu-icon"
+          id="menu-icon"
+        >&#x22EE;</span>
+        <div
+          class="dropdown-content"
+          id="dropdown-menu"
+        >
+
+          <!-- Title for Single Media -->
+          <div class="dropdown-section-title">Single Media</div>
+          <div
+            class="dropdown-item"
+            id="generate-images"
+          >
+            <i class="fas fa-image"></i> Images
+          </div>
+          <div
+            class="dropdown-item"
+            id="generate-summary"
+          >
+            <i class="fas fa-align-left"></i> Summary
+          </div>
+          <div
+            class="dropdown-item"
+            id="generate-tts"
+          >
+            <i class="fas fa-volume-up"></i> Text-to-Speech
+          </div>
+          <div
+            class="dropdown-item"
+            id="generate-videos"
+          >
+            <i class="fas fa-video"></i> Music
+          </div>
+
+          <!-- Title for Combined Media -->
+          <div class="dropdown-section-title">Combined Media</div>
+          <div
+            class="dropdown-item"
+            id="generate-image-tts"
+          >
+            <i class="fas fa-video"></i> Image + TTS
+          </div>
+          <div
+            class="dropdown-item"
+            id="generate-image-music"
+          >
+            <i class="fas fa-video"></i> Image + Music
+          </div>
+          <div
+            class="dropdown-item"
+            id="generate-subtitle"
+          >
+            <i class="fas fa-align-left"></i> Subtitle
+          </div>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+  <div
+    id="speech-bar"
+    style="display: flex; flex-direction: row;"
+  >
+    <input
+      type="text"
+      id="text-input"
+      placeholder="Image prompt"
+    />
+    <i
+      class="fa fa-times"
+      id="image-remove-cross"
+      aria-hidden="true"
+    ></i>
+    <i
+      class="fa-regular fa-pen-to-square style-icon"
+      id="style-icon2"
+      title="Select Style"
+    ></i>
+    <div class="file-upload">
+      <input
+        type="file"
+        id="image-input"
+        accept=".png,.jpeg"
+        style="display: none"
+      />
+      <i
+        class="fas fa-file-upload"
+        id="image-upload-icon"
+        title="Upload a Image"
+      ></i>
+
+    </div>
+
+    <div
+      class="dropdown-content2"
+      id="style-dropdown2"
+    >
+      <div
+        class="dropdown-item2"
+        data-style="detailed"
+      >
+        Detailed and High-quality
+      </div>
+      <div
+        class="dropdown-item2"
+        data-style="animated"
+      >
+        Colorful and Animated
+      </div>
+      <div
+        class="dropdown-item2"
+        data-style="sketch"
+      >Pencil Sketch</div>
+      <div
+        class="dropdown-item2"
+        data-style="abstract"
+      >Abstract</div>
+      <div
+        class="dropdown-item2"
+        data-style="vintage"
+      >Vintage</div>
+      <div
+        class="dropdown-item2"
+        data-style="cyberpunk"
+      >Cyberpunk</div>
+      <div
+        class="dropdown-item2"
+        data-style="minimalist"
+      >Minimalist</div>
+      <div
+        class="dropdown-item2"
+        data-style="watercolor"
+      >
+        Watercolor Painting
+      </div>
+      <div
+        class="dropdown-item2"
+        data-style="low-poly"
+      >
+        Low-Poly Geometric
+      </div>
+    </div>
+  </div>
+  <div
+    id="addtext-bar"
+    style="display: flex; align-items: center;"
+  >
+    <input
+      type="text"
+      id="addtext-input"
+      placeholder="Enter Text"
+    />
+    <i
+      class="fa-regular fa-pen-to-square style-icon"
+      id="style-change"
+      title="Select Style"
+    ></i>
+  </div>
+
+  <div style="display: flex; flex-direction: row;">
+
+    <div
+      style="display: flex; align-items: center; flex-wrap: wrap;"
+      id="text-checkbox-div"
+    >
+      <input
+        type="checkbox"
+        id="textBox"
+      >
+      <label
+        for="subtitle"
+        style="margin: 5px;"
+      >Text</label>
+    </div>
+    <div
+      style="display: flex; align-items: center; flex-wrap: wrap;"
+      id="Music-checkbox-div"
+    >
+      <input
+        type="checkbox"
+        id="musicbox"
+      >
+      <label
+        for="subtitle"
+        style="margin: 5px;"
+      >Music</label>
+    </div>
+
+    <div
+      style="display: flex; align-items: center; flex-wrap: wrap;"
+      id="tts-checkbox-div"
+    >
+      <input
+        type="checkbox"
+        checked="true"
+        id="ttsbox"
+        disabled
+      >
+      <label
+        for="subtitle"
+        style="margin-left: 5px;"
+      >TTS</label>
+    </div>
+    <div
+      style="display: flex; align-items: center; flex-wrap: wrap;"
+      id="sub-checkbox-div"
+    >
+      <input
+        type="checkbox"
+        id="subtitlebox"
+      >
+      <label
+        for="subtitle"
+        style="margin-left: 5px;"
+      >Subtitle</label>
+    </div>
+
+
+  </div>
+  </div>
+
+
+
+  </div>
+
+
+  <div
+    id="error-log"
+    class="error-log"
+  ></div>
+  <span
+    class="loader"
+    id="loader"
+    style="display: none"
+  ></span>
+  <div
+    class="output-images"
+    id="output"
+  ></div>
+  <div
+    id="videoContainer"
+    style="width: 30%; display: flex;flex-direction: column;justify-content: center; "
+  ></div>
+  <div
+    id="errorLog"
+    style="display:none; color:red;"
+  ></div>
+  <div
+    id="loader"
+    style="display:none;"
+  >Loading...</div>
+
+  </div>
+
+
+  <div
+    class="font-style-edit"
+    id="font-style-edit"
+  >
+    <div class="text">
+      <h3 style="font-size: 24px; margin-bottom: 15px; color: #333; text-align: center; font-weight: 700; border-bottom: 2px solid #ddd; padding-bottom: 5px;">
+        Text Style Editor</h3>
+
+      <!-- Font Family Selector -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="fontSelector"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Font:</label>
+        <select
+          id="fontFamily"
+          class="dropdown"
+          style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+        >
+          <option value="Arial">Arial</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Comic Sans MS">Comic Sans MS</option>
+        </select>
+      </div>
+
+
+
+      <!-- Font Color Selector -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="fontColor"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Color:</label>
+        <input
+          type="color"
+          id="fontColor"
+          value="#fffff"
+          style="width: 100%; height: 30px; border-radius: 5px; border: none;"
+        >
+      </div>
+
+
+
+
+      <!-- Outline Color Selector -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="outlineColor"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Outline Color:</label>
+        <input
+          type="color"
+          id="outlineColor"
+          name="outlineColor"
+          value="#000000"
+          style="width: 100%; height: 30px; border-radius: 5px; border: none;"
+        >
+      </div>
+
+      <!-- Font Scale -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="fontScale"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Font Scale:</label>
+        <input
+          type="number"
+          id="fontScale"
+          name="fontScale"
+          value="32.0"
+          min="0.1"
+          step="0.1"
+          style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+        >
+      </div>
+
+      <!-- Text Thickness -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="thickness"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Text Thickness:</label>
+        <input
+          type="number"
+          id="thickness"
+          name="thickness"
+          value="0"
+          min="0"
+          style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+        >
+      </div>
+
+      <!-- Line Spacing -->
+      <!-- <div class="control-group" style="margin-bottom: 10px;">
+          <label for="lineSpacing" style="font-weight: bold; display: block; margin-bottom: 5px;">Line Spacing:</label>
+          <input type="number" id="lineSpacing" name="lineSpacing" value="1.5" min="1" step="0.1" style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+        </div> -->
+
+      <!-- Text Alignment -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="alignment"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Alignment:</label>
+        <select
+          id="alignment"
+          name="alignment"
+          style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+        >
+          <option
+            value="center"
+            selected
+          >Center</option>
+          <option value="left">Left</option>
+          <option value="right">Right</option>
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+        <button
+          id="cancelButton"
+          style="width: 48%; padding: 8px 0; background-color: white; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;"
+        >Cancel</button>
+        <button
+          id="applyButton"
+          style="width: 48%; padding: 8px 0; background-color: #991B10; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;"
+        >Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="subtitle-style-edit"
+    id="subtitle-style-edit"
+  >
+    <div class="text">
+      <h3 style="font-size: 24px; margin-bottom: 15px; color: #333; text-align: center; font-weight: 700; border-bottom: 2px solid #ddd; padding-bottom: 5px;">
+        Subtitle Style Editor</h3>
+
+      <!-- Font Family Selector -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="subtitlefontSelector"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Font:</label>
+        <select
+          id="subtitlefontFamily"
+          class="dropdown"
+          style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+        >
+          <option value="Arial">Arial</option>
+          <option value="Times New Roman">Times New Roman</option>
+          <option value="Courier New">Courier New</option>
+          <option value="Georgia">Georgia</option>
+          <option value="Verdana">Verdana</option>
+          <option value="Comic Sans MS">Comic Sans MS</option>
+        </select>
+      </div>
+
+
+
+      <!-- Font Color Selector -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="fontColor"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Color:</label>
+        <input
+          type="color"
+          id="subtitlefontColor"
+          value="#000000"
+          style="width: 100%; height: 30px; border-radius: 5px; border: none;"
+        >
+      </div>
+
+      <!-- highlight Color Selector -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="subtitleHighlightColor"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Highlight Color:</label>
+        <input
+          type="color"
+          id="subtitleHighlightColor"
+          name="subtitleHighlightColor"
+          value="#fffff"
+          style="width: 100%; height: 30px; border-radius: 5px; border: none;"
+        >
+      </div>
+
+
+
+      <!-- Outline Color Selector -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="outlineColor"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Stroke Color:</label>
+        <input
+          type="color"
+          id="subtitleOutlineColor"
+          name="outlineColor"
+          value="#000000"
+          style="width: 100%; height: 30px; border-radius: 5px; border: none;"
+        >
+      </div>
+
+      <!-- Font Scale -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="fontScale"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Font Scale:</label>
+        <input
+          type="number"
+          id="subtitlefontScale"
+          name="fontScale"
+          value="24.0"
+          min="0.1"
+          step="0.1"
+          style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+        >
+      </div>
+
+      <!-- Text Thickness -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="thickness"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Stroke Thickness:</label>
+        <input
+          type="number"
+          id="strokethickness"
+          name="thickness"
+          value="2"
+          min="1"
+          style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+        >
+      </div>
+
+      <!-- Line Spacing -->
+      <!-- <div class="control-group" style="margin-bottom: 10px;">
+          <label for="lineSpacing" style="font-weight: bold; display: block; margin-bottom: 5px;">Line Spacing:</label>
+          <input type="number" id="lineSpacing" name="lineSpacing" value="1.5" min="1" step="0.1" style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;">
+        </div> -->
+
+      <!-- Text Alignment -->
+      <div
+        class="control-group"
+        style="margin-bottom: 10px;"
+      >
+        <label
+          for="alignment"
+          style="font-weight: bold; display: block; margin-bottom: 5px;"
+        >Alignment:</label>
+        <select
+          id="subtitlealignment"
+          name="alignment"
+          style="width: 100%; padding: 5px; border-radius: 5px; border: 1px solid #ccc;"
+        >
+          <option
+            value="center"
+            selected
+          >Center</option>
+          <option value="top">Top</option>
+          <option value="bottom">bottom</option>
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+        <button
+          id="subtitlecancelButton"
+          style="width: 48%; padding: 8px 0; background-color: white; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;"
+        >Cancel</button>
+        <button
+          id="subtitleapplyButton"
+          style="width: 48%; padding: 8px 0; background-color: #991B10; color: #fff; border: none; border-radius: 5px; cursor: pointer; font-weight: bold;"
+        >Apply</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <footer>
+    &copy; 2024 All Rights Reserved |
+    <a href="#">Privacy Policy</a> | <a href="#">Terms & Conditions</a> |
+    <a href="#">FAQ</a> | <a href="#">Contact</a> |
+    <a href="#">Blog</a>
+  </footer>
+
+  {#
+  <script src="./js/tts.js"></script>
+
+  <script src="./js/prompt.js"></script> #}
+  <script src="https://cdn.jsdelivr.net/npm/@jaames/iro@5"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+
+  {#
+  <script src="./js/index.js"></script> #}
+  <script src="main.bundle.js"></script>
+  <script src="core.js"></script>
+
+</body>
+
+</html>
+
+</html>
